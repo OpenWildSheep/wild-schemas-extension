@@ -1,6 +1,6 @@
 import { promisify } from 'util';
 import { exec } from 'child_process';
-import { readFile } from 'fs';
+import { readFile, existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { watch } from 'chokidar';
 
@@ -10,50 +10,57 @@ import assert = require('assert');
 const execAsync = promisify(exec);
 const readFileAsync = promisify(readFile);
 
-async function getP4Root(): Promise<string> {
-	const command = "p4 -F %clientRoot% -ztag info";
-	let defaultRoot: string|undefined = vscode.workspace.getConfiguration("wildschema").get("defaultP4Root");
-	if (defaultRoot === undefined) {
-		defaultRoot = "X:";
+function replaceAllChars(text: string, chars: string, replacement: string): string {
+	return text.replace(new RegExp("[" + chars.replace(/([/,!\\^${}[\]().*+?|<>\-&])/g,"\\$&") + "]", "g"), replacement.replace(/\$/g,"$$$$"));
+}
+
+function getSchemaPathFromConfig(): string|undefined {
+	if (existsSync(join(__dirname, "..", "config.json"))){
+		console.log("Config file exists");
+		const jsonConfigAsync = readFileSync(join(__dirname, "..", "config.json"), "utf-8");
+		const configAsync = JSON.parse(jsonConfigAsync);
+		return configAsync["schemasPath"]
 	}
-	try {
-		let workingDir = ".";
-		if (vscode.workspace.workspaceFolders !== undefined) {
-			workingDir = vscode.workspace.workspaceFolders[0].uri.fsPath;
-		}
-		const output = await execAsync(command, {
-			cwd: workingDir
-		});
-		const p4Root = output.stdout.trim();
-		if (p4Root === '')
-		{
-			console.error("Could not get P4 root");
-			return defaultRoot;
-		}
-		return p4Root;
-	} catch (err) {
-		console.error(`Could not get P4 root: "${err}"`);
-		return defaultRoot;
+	return undefined
+}
+
+function getSchemaPathFromWorkspace(): string {
+	let rootPath: string|undefined = vscode.workspace.getConfiguration("wildschema").get("rootPath");
+	if (rootPath === undefined || rootPath == ""){
+		throw new Error("rootPath default value needs to be set in workspace configuration (package.json)")
+		return ""
 	}
+
+	let schemaPath: string|undefined = vscode.workspace.getConfiguration("wildschema").get("schemaPath");
+	if (schemaPath === undefined || schemaPath == ""){
+		throw new Error("schemaPath default value needs to be set in workspace configuration (package.json)")
+		return ""
+	}
+
+	return join(rootPath, schemaPath)
 }
 
 async function getSchemaRootFolder(): Promise<string> {
-	const p4Root = await getP4Root();
-	let schemaRootPath: string|undefined = vscode.workspace.getConfiguration("wildschema").get("schemaRootPath");
-	if (schemaRootPath === undefined) {
-		schemaRootPath = join("Tools", "WildPipeline", "Schema");
-	}
-	return join(p4Root, schemaRootPath);
-}
 
-function replaceAllChars(text: string, chars: string, replacement: string): string {
-	return text.replace(new RegExp("[" + chars.replace(/([/,!\\^${}[\]().*+?|<>\-&])/g,"\\$&") + "]", "g"), replacement.replace(/\$/g,"$$$$"));
+	const schemaPath = getSchemaPathFromConfig()
+	if (schemaPath != undefined) {
+		return schemaPath
+	}
+	else {
+		console.log("No config file found, get schema path from workspace.wildschema configuration");
+		return getSchemaPathFromWorkspace()
+	}
 }
 
 export async function activate({ subscriptions }: vscode.ExtensionContext) {
 
 	// register a content provider for the wildschema scheme
 	const schemaRoot = await getSchemaRootFolder();
+
+	if (schemaRoot === "") {
+		return
+	}
+
 	const wildScheme = 'wildschema';
 
 	const escapedChars: string|undefined = vscode.workspace.getConfiguration("wildschema").get("escapeCharInSchemaName");
