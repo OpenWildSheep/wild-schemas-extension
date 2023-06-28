@@ -9,13 +9,9 @@ You need to set it into Preferences > Settings > Extensions > Wild Schemas > sch
 
 ## Running the extension in debug
 
-- In VSCode's terminal, from the `wild-schemas-extension` repository's folder:
-  - Run `npm install` in terminal to install dependencies
-
-- In the `JavaScript Debug Terminal` (ctrl + shift + p > `Debug: JavaScript Debug Terminal`)
-	- Launch `npm run compile`
-		- Build all the needed files into `/out` folder
-		- Create a file watcher
+- From `Debug: JavaScript Debug Terminal` from Command Palette (Ctrl + Shift + P)
+	- Launch `npm install` command
+	- Launch `npm run compile` command
 
 - From `Run and Debug`:
   - Select `Client + Server`
