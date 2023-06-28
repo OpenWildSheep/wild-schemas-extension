@@ -1,0 +1,65 @@
+{
+	"name": "wild-schemas-extension",
+	"displayName": "Wild Schemas documents provider",
+	"version": "0.2.0",
+	"description": "Provide coloration and completion for wild schema based json files (node, entity, scene)",
+	"publisher": "wildsheepstudio",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/WildSheepStudio/wild-schemas-extension"
+	},
+	"engines": {
+		"vscode": "^1.32.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onLanguage:json",
+		"onLanguage:jsonc"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"configuration": {
+			"type": "object",
+			"title": "Wild Schemas",
+			"properties": {
+				"wildschema.defaultP4Root": {
+					"scope": "window",
+					"type": "string",
+					"default": "X:",
+					"description": "Default perforce root to use when p4 fail to get the root."
+				},
+				"wildschema.schemaRootPath": {
+					"scope": "window",
+					"type": "string",
+					"default": "/Tools/WildPipeline/Schema",
+					"description": "Path to the root path of all schemas under perforce root."
+				},
+				"wildschema.escapeCharInSchemaName": {
+					"scope": "window",
+					"type": "string",
+					"default": "<>:",
+					"description": "List of escaped character in schema names."
+				}
+			}
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"lint": "eslint . --ext .ts,.tsx",
+		"watch": "tsc -watch -p ./"
+	},
+	"dependencies": {
+		"chokidar": "^3.5.2"
+	},
+	"devDependencies": {
+		"@typescript-eslint/eslint-plugin": "^4.16.0",
+		"@typescript-eslint/parser": "^4.16.0",
+		"@types/node": "^12.12.0",
+		"@types/vscode": "^1.32.0",
+		"eslint": "^7.21.0",
+		"typescript": "^4.2.2"
+	}
+}
