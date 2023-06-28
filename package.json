@@ -24,16 +24,10 @@
 			"type": "object",
 			"title": "Wild Schemas",
 			"properties": {
-				"wildschema.rootPath": {
-					"scope": "window",
-					"type": "string",
-					"default": "D:",
-					"description": "Default root to use."
-				},
 				"wildschema.schemaPath": {
 					"scope": "window",
 					"type": "string",
-					"default": "/schema",
+					"default": "",
 					"description": "Path to the root path of all schemas under root."
 				},
 				"wildschema.escapeCharInSchemaName": {

@@ -4,14 +4,8 @@ This is an extension that allows vscode to resolve `wildshema:://` urls.
 
 ## Configure
 
-The extension needs to have access to your Schemas paths to work.
-
-You have two manners to set it:
-- Rename `config_example.json` and set `schemasPath` to your Schemas path
-or
-- In `package.json`:
-	- Set `wildschema.rootPath.default` to the drive where are your schemas (eg: D:)
-	- Set `wildschema.schemaPath.default` to the path where are your schemas, relative to the drive (eg: /schema)
+The extension needs to have access to your Schemas paths to work.  
+You need to set it into Preferences > Settings > Extensions > Wild Schemas > schemaPath.
 
 ## Running the extension in debug
 

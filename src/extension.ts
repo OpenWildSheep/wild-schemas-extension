@@ -14,42 +14,15 @@ function replaceAllChars(text: string, chars: string, replacement: string): stri
 	return text.replace(new RegExp("[" + chars.replace(/([/,!\\^${}[\]().*+?|<>\-&])/g,"\\$&") + "]", "g"), replacement.replace(/\$/g,"$$$$"));
 }
 
-function getSchemaPathFromConfig(): string|undefined {
-	if (existsSync(join(__dirname, "..", "config.json"))){
-		console.log("Config file exists");
-		const jsonConfigAsync = readFileSync(join(__dirname, "..", "config.json"), "utf-8");
-		const configAsync = JSON.parse(jsonConfigAsync);
-		return configAsync["schemasPath"]
-	}
-	return undefined
-}
-
-function getSchemaPathFromWorkspace(): string {
-	let rootPath: string|undefined = vscode.workspace.getConfiguration("wildschema").get("rootPath");
-	if (rootPath === undefined || rootPath == ""){
-		throw new Error("rootPath default value needs to be set in workspace configuration (package.json)")
-		return ""
-	}
-
-	let schemaPath: string|undefined = vscode.workspace.getConfiguration("wildschema").get("schemaPath");
-	if (schemaPath === undefined || schemaPath == ""){
-		throw new Error("schemaPath default value needs to be set in workspace configuration (package.json)")
-		return ""
-	}
-
-	return join(rootPath, schemaPath)
-}
 
 async function getSchemaRootFolder(): Promise<string> {
 
-	const schemaPath = getSchemaPathFromConfig()
-	if (schemaPath != undefined) {
-		return schemaPath
+	let schemaPath: string|undefined = vscode.workspace.getConfiguration("wildschema").get("schemaPath");
+	if (schemaPath === undefined || schemaPath == ""){
+		throw new Error("schemaPath default value needs to be set in VSCode configuration")
+		return ""
 	}
-	else {
-		console.log("No config file found, get schema path from workspace.wildschema configuration");
-		return getSchemaPathFromWorkspace()
-	}
+	return schemaPath
 }
 
 export async function activate({ subscriptions }: vscode.ExtensionContext) {
@@ -62,7 +35,6 @@ export async function activate({ subscriptions }: vscode.ExtensionContext) {
 	}
 
 	const wildScheme = 'wildschema';
-
 	const escapedChars: string|undefined = vscode.workspace.getConfiguration("wildschema").get("escapeCharInSchemaName");
 	
 	const wildProvider = new class implements vscode.TextDocumentContentProvider {
