@@ -19,7 +19,7 @@ async function getSchemaRootFolder(): Promise<string> {
 
 	let schemaPath: string|undefined = vscode.workspace.getConfiguration("wildschema").get("schemaPath");
 	if (schemaPath === undefined || schemaPath == ""){
-		throw new Error("schemaPath default value needs to be set in VSCode configuration")
+		throw new Error("schemaPath value needs to be set in VSCode settings")
 		return ""
 	}
 	return schemaPath
