@@ -24,17 +24,17 @@
 			"type": "object",
 			"title": "Wild Schemas",
 			"properties": {
-				"wildschema.defaultP4Root": {
+				"wildschema.rootPath": {
 					"scope": "window",
 					"type": "string",
-					"default": "X:",
-					"description": "Default perforce root to use when p4 fail to get the root."
+					"default": "D:",
+					"description": "Default root to use."
 				},
-				"wildschema.schemaRootPath": {
+				"wildschema.schemaPath": {
 					"scope": "window",
 					"type": "string",
-					"default": "/Tools/WildPipeline/Schema",
-					"description": "Path to the root path of all schemas under perforce root."
+					"default": "/schema",
+					"description": "Path to the root path of all schemas under root."
 				},
 				"wildschema.escapeCharInSchemaName": {
 					"scope": "window",
